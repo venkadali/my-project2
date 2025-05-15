@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = 'my-tomcat-server'
         CONTAINER_NAME = 'tomcat-server'
-        HOST_PORT = '8081'
+        HOST_PORT = '8083'
         CONTAINER_PORT = '8080'
     }
 
