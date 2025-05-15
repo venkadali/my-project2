@@ -17,7 +17,7 @@ pipeline {
             steps {
                 echo 'This pipeline runs every 5 minutes'
             }
-
+        }
     
         stage('Checkout') {
             steps {
@@ -45,8 +45,6 @@ pipeline {
              }
           }
        
-        }
-      }
     }
 
     post {
@@ -55,4 +53,3 @@ pipeline {
         }
     }
 }
-
