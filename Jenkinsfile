@@ -12,13 +12,17 @@ pipeline {
         cron('H/5 * * * *') // Runs every 5 minutes
     }
 
+    options {
+        timestamps()
+    }
+
     stages {
-        stage('Example') {
+        stage('Print Info') {
             steps {
                 echo 'This pipeline runs every 5 minutes'
             }
         }
-    
+
         stage('Checkout') {
             steps {
                 git credentialsId: 'github-credentials', url: 'https://github.com/venkadali/my-project2.git'
@@ -28,7 +32,10 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${IMAGE_NAME} ."
+                    sh """
+                        echo "Building Docker image: ${IMAGE_NAME}"
+                        docker build -t ${IMAGE_NAME} .
+                    """
                 }
             }
         }
@@ -36,20 +43,25 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Stop and remove existing container if it exists
                     sh """
-                        docker rm -f ${CONTAINER_NAME} || true
+                        echo "Stopping existing container if running..."
+                        docker rm -f ${CONTAINER_NAME} 2>/dev/null || true
+                        
+                        echo "Starting new container..."
                         docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}
                     """
                 }
-             }
-          }
-       
+            }
+        }
     }
 
     post {
         success {
-            echo "Tomcat server is running at http://localhost:${HOST_PORT}"
+            echo "✅ Tomcat server is running at http://localhost:${HOST_PORT}"
+        }
+        failure {
+            echo "❌ Build failed. Check logs for details."
         }
     }
 }
+
