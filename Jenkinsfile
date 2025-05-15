@@ -8,7 +8,17 @@ pipeline {
         CONTAINER_PORT = '8080'
     }
 
+    triggers {
+        cron('H/5 * * * *') // Runs every 5 minutes
+    }
+
     stages {
+        stage('Example') {
+            steps {
+                echo 'This pipeline runs every 5 minutes'
+            }
+
+    
         stage('Checkout') {
             steps {
                 git credentialsId: 'github-credentials', url: 'https://github.com/venkadali/my-project2.git'
@@ -32,8 +42,11 @@ pipeline {
                         docker run -d -p ${HOST_PORT}:${CONTAINER_PORT} --name ${CONTAINER_NAME} ${IMAGE_NAME}
                     """
                 }
-            }
+             }
+          }
+       
         }
+      }
     }
 
     post {
